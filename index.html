@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catoosa County Crime & First Responder Activity</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #000;
+      color: #fff;
+    }
+    header {
+      text-align: center;
+      padding: 30px 10px;
+      border-bottom: 2px solid #c5a100;
+    }
+    header img {
+      width: 150px;
+      border-radius: 50%;
+    }
+    header h1 {
+      color: #c5a100;
+      font-size: 1.8em;
+      margin-top: 10px;
+    }
+    nav {
+      text-align: center;
+      background-color: #111;
+      padding: 10px;
+      border-bottom: 1px solid #c5a100;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    nav a:hover {
+      color: #c5a100;
+    }
+    section {
+      padding: 25px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h2 {
+      color: #c5a100;
+      border-bottom: 1px solid #c5a100;
+      padding-bottom: 5px;
+      text-align: center;
+    }
+    #live-scanner {
+      text-align: center;
+      background-color: #111;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(197,161,0,0.2);
+      margin-bottom: 30px;
+    }
+    #live-scanner audio {
+      width: 80%;
+      max-width: 400px;
+      border-radius: 10px;
+      outline: none;
+      box-shadow: 0 0 10px rgba(197,161,0,0.2);
+    }
+    #news {
+      background-color: #111;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(197,161,0,0.2);
+    }
+    .news-item {
+      background-color: #000;
+      border: 1px solid #c5a100;
+      border-radius: 8px;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+    }
+    .news-item a {
+      color: #c5a100;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .news-item a:hover {
+      text-decoration: underline;
+    }
+    #tip {
+      text-align: center;
+      margin-top: 40px;
+    }
+    #tip a {
+      display: inline-block;
+      background-color: #c5a100;
+      color: #000;
+      padding: 12px 25px;
+      border-radius: 5px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    #tip a:hover {
+      background-color: #fff;
+      color: #000;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid #c5a100;
+      font-size: 0.9em;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Catoosa County Logo">
+    <h1>Catoosa County Crime & First Responder Activity</h1>
+  </header>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#news">Local News</a>
+    <a href="#live-scanner">Live Scanner</a>
+    <a href="#tip">Submit a Tip</a>
+  </nav>
+  <main>
+    <section id="live-scanner">
+      <h2>🎧 Live Catoosa County Police & Fire Feed</h2>
+      <audio controls>
+        <source src="https://m.broadcastify.com/listen/feed/37819" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+      <p style="color:#c5a100; margin-top:10px;">
+        Powered by <a href="https://www.broadcastify.com/listen/feed/37819" target="_blank" style="color:#fff;">Broadcastify</a>
+      </p>
+    </section>
+    <section id="news">
+      <h2>📰 Local News & Activity</h2>
+      <div id="news-list">Loading latest updates...</div>
+    </section>
+    <section id="tip">
+      <h2>📩 Submit a Tip</h2>
+      <a href="mailto:catoosacountyactivity@gmail.com">Send Email Tip</a>
+    </section>
+  </main>
+  <footer>
+    © 2025 Catoosa County Crime & First Responder Activity — All Rights Reserved
+  </footer>
+  <script>
+    const feedUrl = "https://news.google.com/rss/search?q=Catoosa+County+Georgia+OR+Fort+Oglethorpe+Georgia+OR+Chickamauga+Georgia&hl=en-US&gl=US&ceid=US:en";
+    const newsList = document.getElementById("news-list");
+    fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(feedUrl))
+      .then(response => response.json())
+      .then(data => {
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(data.contents, "text/xml");
+        const items = xml.querySelectorAll("item");
+        let html = "";
+        items.forEach((item, index) => {
+          if (index < 10) {
+            const title = item.querySelector("title").textContent;
+            const link = item.querySelector("link").textContent;
+            const pubDate = new Date(item.querySelector("pubDate").textContent).toLocaleString();
+            html += `<div class="news-item">
+                <a href="${link}" target="_blank">${title}</a>
+                <p style="color:#ccc; font-size:0.8em;">Published: ${pubDate}</p>
+              </div>`;
+          }
+        });
+        newsList.innerHTML = html || "<p>No recent local stories found.</p>";
+      })
+      .catch(err => {
+        newsList.innerHTML = "<p style='color:#c5a100;'>Unable to load news feed. Please try again later.</p>";
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
